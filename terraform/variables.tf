@@ -15,3 +15,8 @@ variable "subnet_cidr" {
   type        = string
   default     = "10.0.1.0/24"
 }
+
+variable "my_ip_cidr" {
+  description = "Admin public IP in /32 notation, the only source allowed to SSH into srv-argus"
+  type        = string
+}
