@@ -20,3 +20,14 @@ variable "my_ip_cidr" {
   description = "Admin public IP in /32 notation, the only source allowed to SSH into srv-argus"
   type        = string
 }
+
+variable "ssh_public_key_path" {
+  description = "Path to the admin SSH public key"
+  type        = string
+  default     = "~/.ssh/argus.pub"
+}
+
+variable "budget_email" {
+  description = "Email address receiving the AWS budget alerts"
+  type        = string
+}
