@@ -1,0 +1,10 @@
+# Terraform : état et variables personnelles
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
+
+# Secrets
+.env
+*.pem
