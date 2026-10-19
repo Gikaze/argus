@@ -7,6 +7,7 @@ KEY=~/.ssh/argus
 SSH_OPTS="-o StrictHostKeyChecking=accept-new -o BatchMode=yes"
 APP=$(terraform -chdir=terraform output -raw srv_app_public_ip)
 ARGUS=$(terraform -chdir=terraform output -raw srv_argus_public_ip)
+APP_PRIVATE=$(terraform -chdir=terraform output -raw srv_app_private_ip)
 
 for IP in $APP $ARGUS; do
   echo "=== Checking $IP ==="
@@ -27,3 +28,13 @@ curl -s -m 5 http://$APP | grep -o '<h1>.*</h1>' || echo "FAILED: portal not rea
 
 echo "--- Nginx service and restart policy:"
 ssh $SSH_OPTS -i $KEY ubuntu@$APP "systemctl is-active nginx; systemctl show nginx -p Restart"
+
+
+echo "=== Checking the metrics of $APP ==="
+echo "--- From srv-argus, over the internal network (must show nginx active = 1):"
+ssh $SSH_OPTS -i $KEY ubuntu@$ARGUS "curl -s -m 3 http://$APP_PRIVATE:9100/metrics | grep 'nginx.service\",state=\"active\"'"
+
+echo "--- From the Internet (must NOT be reachable):"
+curl -s -m 5 http://$APP:9100/metrics > /dev/null && echo "FAILED: metrics exposed to the Internet" || echo "OK: not reachable from the Internet"
+
+

@@ -19,3 +19,12 @@ systemctl restart nginx
 
 # 4. Firewall: open the web port
 ufw allow 80/tcp
+
+
+# 5. node_exporter: system and service metrics for Prometheus
+apt-get install -y prometheus-node-exporter
+cp config/node-exporter/prometheus-node-exporter /etc/default/prometheus-node-exporter
+systemctl restart prometheus-node-exporter
+
+# 6. Firewall: metrics port open to the internal network (VPC) only
+ufw allow from 10.0.0.0/16 to any port 9100 proto tcp
