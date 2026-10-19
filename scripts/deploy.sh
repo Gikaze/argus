@@ -18,3 +18,6 @@ for IP in $APP $ARGUS; do
   scp $SSH_OPTS -r scripts config ubuntu@$IP:~/
   ssh $SSH_OPTS ubuntu@$IP "sudo bash scripts/harden.sh"
 done
+
+echo "=== Setting up the portal on $APP ==="
+ssh $SSH_OPTS ubuntu@$APP "sudo bash scripts/setup-app.sh"

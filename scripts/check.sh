@@ -20,3 +20,10 @@ for IP in $APP $ARGUS; do
   echo "--- Firewall:"
   ssh $SSH_OPTS -i $KEY ubuntu@$IP "sudo ufw status"
 done
+
+echo "=== Checking the portal on $APP ==="
+echo "--- Web page (must show the portal title):"
+curl -s -m 5 http://$APP | grep -o '<h1>.*</h1>' || echo "FAILED: portal not reachable"
+
+echo "--- Nginx service and restart policy:"
+ssh $SSH_OPTS -i $KEY ubuntu@$APP "systemctl is-active nginx; systemctl show nginx -p Restart"
