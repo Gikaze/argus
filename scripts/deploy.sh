@@ -7,6 +7,7 @@ KEY=~/.ssh/argus
 SSH_OPTS="-i $KEY -o StrictHostKeyChecking=accept-new -o ConnectTimeout=5"
 APP=$(terraform -chdir=terraform output -raw srv_app_public_ip)
 ARGUS=$(terraform -chdir=terraform output -raw srv_argus_public_ip)
+ADMIN_IP=$(curl -s https://checkip.amazonaws.com)
 
 for IP in $APP $ARGUS; do
   echo "=== Waiting for SSH on $IP ==="
@@ -20,4 +21,7 @@ for IP in $APP $ARGUS; do
 done
 
 echo "=== Setting up the portal on $APP ==="
-ssh $SSH_OPTS ubuntu@$APP "sudo bash scripts/setup-app.sh"
+ssh $SSH_OPTS ubuntu@$APP "sudo ADMIN_IP=$ADMIN_IP bash scripts/setup-app.sh"
+
+
+

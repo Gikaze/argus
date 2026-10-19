@@ -38,3 +38,10 @@ echo "--- From the Internet (must NOT be reachable):"
 curl -s -m 5 http://$APP:9100/metrics > /dev/null && echo "FAILED: metrics exposed to the Internet" || echo "OK: not reachable from the Internet"
 
 
+echo "=== Checking fail2ban on $APP ==="
+echo "--- Service and SSH jail:"
+ssh $SSH_OPTS -i $KEY ubuntu@$APP "systemctl is-active fail2ban; sudo fail2ban-client status sshd | grep -E 'Total failed|Currently banned'"
+
+echo "--- Seen by node_exporter from srv-argus (must show fail2ban active = 1):"
+ssh $SSH_OPTS -i $KEY ubuntu@$ARGUS "curl -s -m 3 http://$APP_PRIVATE:9100/metrics | grep 'fail2ban.service\",state=\"active\"'"
+

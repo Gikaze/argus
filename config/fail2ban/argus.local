@@ -1,0 +1,9 @@
+# Argus: ban IPs after repeated failed SSH logins
+[sshd]
+enabled  = true
+backend  = systemd
+maxretry = 3
+findtime = 10m
+bantime  = 1h
+# ADMIN_IP is replaced by the admin's current IP during deployment
+ignoreip = 127.0.0.1/8 ::1 ADMIN_IP
