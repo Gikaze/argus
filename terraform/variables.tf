@@ -31,3 +31,8 @@ variable "budget_email" {
   description = "Email address receiving the AWS budget alerts"
   type        = string
 }
+
+variable "alert_email" {
+  description = "Email address that receives the Argus alerts"
+  type        = string
+}
