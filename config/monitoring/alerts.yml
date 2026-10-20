@@ -1,0 +1,35 @@
+# Argus alert rules, evaluated by Prometheus every 15 seconds
+groups:
+  - name: argus
+    rules:
+      - alert: ServerUnreachable
+        expr: up{job="srv-app"} == 0                       # Prometheus could not read node_exporter
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "srv-app does not answer: its metrics cannot be read"
+
+      - alert: NginxStopped
+        expr: node_systemd_unit_state{name="nginx.service",state="active"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Nginx is not running on srv-app: the portal is offline"
+
+      - alert: Fail2banStopped
+        expr: node_systemd_unit_state{name="fail2ban.service",state="active"} == 0
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "fail2ban is not running on srv-app: SSH attacks are no longer blocked"
+
+      - alert: DiskAlmostFull
+        expr: node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100 < 15
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Less than 15 % free space on the root disk of srv-app"

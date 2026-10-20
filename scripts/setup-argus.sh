@@ -18,5 +18,11 @@ sed -i "s/APP_PRIVATE_IP/$APP_PRIVATE_IP/" /opt/argus/prometheus.yml
 echo "GF_SECURITY_ADMIN_PASSWORD=$GRAFANA_PASSWORD" > /opt/argus/.env
 chmod 600 /opt/argus/.env
 
-# 5. Start the stack, recreating the containers so they read the latest configuration
+# 5. Check the Prometheus configuration and alert rules before starting
+docker run --rm -v /opt/argus:/etc/prometheus --entrypoint promtool \
+  prom/prometheus:v3.5.0 check config /etc/prometheus/prometheus.yml
+
+# 6. Start the stack, recreating the containers so they read the latest configuration
 docker compose --project-directory /opt/argus up -d --force-recreate
+
+
