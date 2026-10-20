@@ -10,17 +10,18 @@ ARGUS=$(terraform -chdir=terraform output -raw srv_argus_public_ip)
 ADMIN_IP=$(curl -s https://checkip.amazonaws.com)
 
 for IP in $APP $ARGUS; do
-  echo "=== Waiting for SSH on $IP ==="
+  if [ "$IP" = "$APP" ]; then NAME=srv-app; else NAME=srv-argus; fi
+  echo "=== Waiting for SSH on $NAME ($IP) ==="
   until ssh $SSH_OPTS ubuntu@$IP true 2>/dev/null; do
     sleep 5
   done
 
-  echo "=== Hardening $IP ==="
+  echo "=== Hardening $NAME ($IP) ==="
   scp $SSH_OPTS -r scripts config ubuntu@$IP:~/
   ssh $SSH_OPTS ubuntu@$IP "sudo bash scripts/harden.sh"
 done
 
-echo "=== Setting up the portal on $APP ==="
+echo "=== Setting up the portal on srv-app ($APP) ==="
 ssh $SSH_OPTS ubuntu@$APP "sudo ADMIN_IP=$ADMIN_IP bash scripts/setup-app.sh"
 
 
