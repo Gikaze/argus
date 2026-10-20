@@ -1,0 +1,8 @@
+# Prometheus: what to collect and how often
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: srv-app
+    static_configs:
+      - targets: ["APP_PRIVATE_IP:9100"]   # replaced by setup-argus.sh at deployment
