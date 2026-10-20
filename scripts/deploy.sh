@@ -9,6 +9,8 @@ APP=$(terraform -chdir=terraform output -raw srv_app_public_ip)
 ARGUS=$(terraform -chdir=terraform output -raw srv_argus_public_ip)
 ADMIN_IP=$(curl -s https://checkip.amazonaws.com)
 APP_PRIVATE=$(terraform -chdir=terraform output -raw srv_app_private_ip)
+SNS_TOPIC_ARN=$(terraform -chdir=terraform output -raw sns_topic_arn)
+
 source .env                       # GRAFANA_PASSWORD, kept out of Git
 
 
@@ -30,5 +32,5 @@ ssh $SSH_OPTS ubuntu@$APP "sudo ADMIN_IP=$ADMIN_IP bash scripts/setup-app.sh"
 
 
 echo "=== Setting up monitoring on srv-argus ($ARGUS) ==="
-ssh $SSH_OPTS ubuntu@$ARGUS "sudo APP_PRIVATE_IP=$APP_PRIVATE GRAFANA_PASSWORD=$GRAFANA_PASSWORD bash scripts/setup-argus.sh"
+ssh $SSH_OPTS ubuntu@$ARGUS "sudo APP_PRIVATE_IP=$APP_PRIVATE GRAFANA_PASSWORD=$GRAFANA_PASSWORD SNS_TOPIC_ARN=$SNS_TOPIC_ARN bash scripts/setup-argus.sh"
 
