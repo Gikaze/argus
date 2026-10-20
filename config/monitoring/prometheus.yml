@@ -6,6 +6,11 @@ global:
 rule_files:
   - /etc/prometheus/alerts.yml
 
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ["alertmanager:9093"]   # where Prometheus sends firing alerts
+
 scrape_configs:
   - job_name: srv-app
     static_configs:

@@ -1,0 +1,16 @@
+# Alertmanager: how to group alerts and where to send them
+route:
+  receiver: email-via-sns
+  group_by: [alertname]
+  group_wait: 30s        # wait a little to put alerts that arrive together in one email
+  group_interval: 1m     # minimum gap between two emails for the same group
+  repeat_interval: 4h    # remind every 4 hours while the problem lasts
+
+receivers:
+  - name: email-via-sns
+    sns_configs:
+      - topic_arn: SNS_TOPIC_ARN     # replaced by setup-argus.sh at deployment
+        sigv4:
+          region: eu-central-1       # same region as the topic
+        subject: '[Argus] {{ .Status | toUpper }}: {{ .CommonLabels.alertname }}'
+        send_resolved: true          # also send an email when the problem is gone
