@@ -50,12 +50,19 @@ ssh $SSH_OPTS -i $KEY ubuntu@$ARGUS "curl -s -m 3 http://$APP_PRIVATE:9100/metri
 echo "=== Checking monitoring on srv-argus ($ARGUS) ==="
 echo "--- Containers (must be Up):"
 ssh $SSH_OPTS ubuntu@$ARGUS "sudo docker ps --format '{{.Names}}: {{.Status}}'"
-echo "--- Ports 9090 and 3000 (must listen on 127.0.0.1 only):"
-ssh $SSH_OPTS ubuntu@$ARGUS "sudo ss -tlnp | grep -E ':(9090|3000) '"
+echo "--- Ports 9090, 9093 and 3000 (must listen on 127.0.0.1 only):"
+ssh $SSH_OPTS ubuntu@$ARGUS "sudo ss -tlnp | grep -E ':(9090|9093|3000) '"
 echo "--- Prometheus reads srv-app (must show health up):"
 ssh $SSH_OPTS ubuntu@$ARGUS "curl -s localhost:9090/api/v1/targets | grep -o '\"health\":\"[a-z]*\"'"
 echo "--- Grafana (must show database ok):"
 ssh $SSH_OPTS ubuntu@$ARGUS "curl -s localhost:3000/api/health | grep -o '\"database\": *\"[a-z]*\"'"
+echo "--- Alertmanager (must show OK):"
+ssh $SSH_OPTS ubuntu@$ARGUS "curl -s localhost:9093/-/ready"; echo
+echo "--- Prometheus knows Alertmanager (must show its URL):"
+ssh $SSH_OPTS ubuntu@$ARGUS "curl -s localhost:9090/api/v1/alertmanagers | grep -o '\"url\":\"[^\"]*\"'"
+echo "--- Alert rules loaded (must list the 4 alerts):"
+ssh $SSH_OPTS ubuntu@$ARGUS "curl -s localhost:9090/api/v1/rules | grep -o '\"name\":\"[A-Za-z0-9]*\"'"
+
 
 
 
