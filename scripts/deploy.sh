@@ -19,6 +19,7 @@ for IP in $APP $ARGUS; do
   echo "=== Hardening $NAME ($IP) ==="
   scp $SSH_OPTS -r scripts config ubuntu@$IP:~/
   ssh $SSH_OPTS ubuntu@$IP "sudo bash scripts/harden.sh"
+  ssh $SSH_OPTS ubuntu@$IP "sudo hostnamectl set-hostname $NAME"   # prompt shows ubuntu@srv-app / ubuntu@srv-argus
 done
 
 echo "=== Setting up the portal on srv-app ($APP) ==="
