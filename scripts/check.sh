@@ -46,3 +46,16 @@ ssh $SSH_OPTS -i $KEY ubuntu@$APP "systemctl is-active fail2ban; sudo fail2ban-c
 echo "--- Seen by node_exporter from srv-argus (must show fail2ban active = 1):"
 ssh $SSH_OPTS -i $KEY ubuntu@$ARGUS "curl -s -m 3 http://$APP_PRIVATE:9100/metrics | grep 'fail2ban.service\",state=\"active\"'"
 
+
+echo "=== Checking monitoring on srv-argus ($ARGUS) ==="
+echo "--- Containers (must be Up):"
+ssh $SSH_OPTS ubuntu@$ARGUS "sudo docker ps --format '{{.Names}}: {{.Status}}'"
+echo "--- Ports 9090 and 3000 (must listen on 127.0.0.1 only):"
+ssh $SSH_OPTS ubuntu@$ARGUS "sudo ss -tlnp | grep -E ':(9090|3000) '"
+echo "--- Prometheus reads srv-app (must show health up):"
+ssh $SSH_OPTS ubuntu@$ARGUS "curl -s localhost:9090/api/v1/targets | grep -o '\"health\":\"[a-z]*\"'"
+echo "--- Grafana (must show database ok):"
+ssh $SSH_OPTS ubuntu@$ARGUS "curl -s localhost:3000/api/health | grep -o '\"database\": *\"[a-z]*\"'"
+
+
+

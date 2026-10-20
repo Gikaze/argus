@@ -1,0 +1,8 @@
+# Grafana: load every dashboard file found in /etc/grafana/dashboards at start-up
+apiVersion: 1
+providers:
+  - name: argus
+    folder: Argus
+    type: file
+    options:
+      path: /etc/grafana/dashboards

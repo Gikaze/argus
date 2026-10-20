@@ -1,0 +1,8 @@
+# Grafana: connect to Prometheus at start-up
+apiVersion: 1
+datasources:
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus                 # fixed ID, used by the dashboard
+    url: http://prometheus:9090     # service name in docker-compose, not localhost
+    isDefault: true
