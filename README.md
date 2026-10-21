@@ -107,10 +107,15 @@ Values that differ per environment never live in the repository: configuration f
 ### Repository structure
 
 ```
-terraform/      network, servers, IAM role, SNS, CloudWatch, budget
-config/         sshd, nginx, node_exporter, fail2ban, monitoring
-scripts/        deploy, check, harden, setup-app, setup-argus, ...
-scripts/utils/  connect, tunnel, service, stack, attack, bans, ...
+terraform/       VPC, subnet, security groups, EC2 instances,
+                 IAM role, SNS, CloudWatch, budget
+config/          sshd, nginx, node_exporter, fail2ban, monitoring
+                 stack (Prometheus, alert rules, Alertmanager,
+                 Grafana provisioning, docker-compose)
+scripts/         deploy.sh, check.sh, harden.sh, setup-app.sh,
+                 setup-argus.sh, update-ip.sh, env.sh
+scripts/utils/   connect, tunnel, service, stack, crash-nginx,
+                 attack, bans, unban
 ```
 
 ### How to run
