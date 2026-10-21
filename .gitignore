@@ -1,4 +1,4 @@
-# Terraform : état et variables personnelles
+# Terraform: provider cache, state files and personal variables
 .terraform/
 *.tfstate
 *.tfstate.*
