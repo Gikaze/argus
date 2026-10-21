@@ -31,9 +31,10 @@ ufw allow from 10.0.0.0/16 to any port 9100 proto tcp
 
 
 
-# 7. fail2ban: ban IPs after repeated failed SSH logins (admin IP never banned)
+# 7. fail2ban: ban IPs after repeated failed SSH logins (admin IP whitelisted)
 apt-get install -y fail2ban python3-systemd
 sed "s/ADMIN_IP/$ADMIN_IP/" config/fail2ban/argus.local > /etc/fail2ban/jail.d/argus.local
+fail2ban-client -t                     # check the fail2ban config before restarting
 systemctl restart fail2ban
 
 
