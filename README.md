@@ -107,10 +107,10 @@ Values that differ per environment never live in the repository: configuration f
 ### Repository structure
 
 ```
-terraform/       VPC, security groups, instances, IAM role, SNS, CloudWatch, budget
-config/          sshd, nginx, node_exporter, fail2ban, monitoring stack
-scripts/         deploy.sh, check.sh, harden.sh, setup-app.sh, setup-argus.sh, ...
-scripts/utils/   connect, tunnel, service, stack, crash-nginx, attack, bans, unban
+terraform/      network, servers, IAM role, SNS, CloudWatch, budget
+config/         sshd, nginx, node_exporter, fail2ban, monitoring
+scripts/        deploy, check, harden, setup-app, setup-argus, ...
+scripts/utils/  connect, tunnel, service, stack, attack, bans, ...
 ```
 
 ### How to run
@@ -118,14 +118,17 @@ scripts/utils/   connect, tunnel, service, stack, crash-nginx, attack, bans, unb
 Prerequisites: an AWS account with the AWS CLI configured, Terraform, and an SSH key pair at `~/.ssh/argus`.
 
 ```bash
-cp terraform/terraform.tfvars.example terraform/terraform.tfvars   # fill in your values
-cp .env.example .env                                               # set a Grafana password
-./scripts/update-ip.sh                                             # write your public IP into tfvars
+# Fill in your values and set a Grafana password
+cp terraform/terraform.tfvars.example terraform/terraform.tfvars
+cp .env.example .env
+# Write your public IP into terraform.tfvars
+./scripts/update-ip.sh
 cd terraform && terraform init && terraform apply && cd ..
-# confirm the SNS subscription email before testing alerts
+# Confirm the SNS subscription email before testing alerts
 ./scripts/deploy.sh
 ./scripts/check.sh
-./scripts/utils/tunnel.sh       # then open localhost:3000 (Grafana), :9090, :9093
+# Then open localhost:3000 (Grafana), :9090 and :9093
+./scripts/utils/tunnel.sh
 ```
 
 When finished: `cd terraform && terraform destroy`.
