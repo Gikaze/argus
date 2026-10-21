@@ -29,6 +29,7 @@ flowchart TB
   bot[Internet bots]
 
   subgraph vpc[AWS eu-central-1, VPC 10.0.0.0/16]
+    direction LR
     subgraph app[srv-app]
       nginx[Nginx portal]
       ssh[SSH keys only + fail2ban]
@@ -56,17 +57,17 @@ flowchart TB
   sns -->|email| admin
   admin -.->|SSH tunnel, admin IP only| grafana
 
-  classDef protect fill:#fde2e1,stroke:#c0392b,color:#1a1a1a
-  classDef observe fill:#dbeafe,stroke:#2563eb,color:#1a1a1a
-  classDef react fill:#dcfce7,stroke:#16a34a,color:#1a1a1a
-  classDef neutral fill:#f3f4f6,stroke:#6b7280,color:#1a1a1a
+  classDef protect fill:#9b2c2c,stroke:#fca5a5,color:#ffffff
+  classDef observe fill:#1e40af,stroke:#93c5fd,color:#ffffff
+  classDef react fill:#166534,stroke:#86efac,color:#ffffff
+  classDef neutral fill:#374151,stroke:#9ca3af,color:#ffffff
   class ssh protect
   class ne,prom,grafana observe
   class am,cw,sns react
   class emp,bot,admin,nginx neutral
-  style vpc fill:#ffffff,stroke:#64748b,color:#1a1a1a
-  style app fill:#f8fafc,stroke:#64748b,color:#1a1a1a
-  style argus fill:#f8fafc,stroke:#64748b,color:#1a1a1a
+  style vpc fill:none,stroke:#64748b
+  style app fill:none,stroke:#94a3b8
+  style argus fill:none,stroke:#94a3b8
 ```
 
 Colours: red = protect, blue = observe, green = react.
