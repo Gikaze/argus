@@ -24,10 +24,9 @@ Detect problems and attacks before users notice them, with open-source tools onl
 Two EC2 instances in one VPC (eu-central-1): **srv-app** serves the portal and protects itself, **srv-argus** watches it and sends the alerts. A CloudWatch alarm, outside both servers, watches the watcher.
 
 ```mermaid
-flowchart LR
-  emp[Employees] -->|HTTP 80| nginx
-  bot[Internet bots] -.->|SSH 22| ssh
-  admin[Admin] -->|SSH tunnel, admin IP only| grafana
+flowchart TB
+  emp[Employees]
+  bot[Internet bots]
 
   subgraph vpc[AWS eu-central-1, VPC 10.0.0.0/16]
     subgraph app[srv-app]
@@ -37,19 +36,40 @@ flowchart LR
     end
     subgraph argus[srv-argus, Docker]
       prom[Prometheus 9090]
-      am[Alertmanager 9093]
       grafana[Grafana 3000]
+      am[Alertmanager 9093]
     end
   end
 
+  cw[CloudWatch alarm]
+  sns[SNS topic]
+  admin[Admin]
+
+  emp -->|HTTP 80| nginx
+  bot -.->|SSH 22| ssh
   prom -->|scrape every 15 s| ne
-  prom -->|firing alerts| am
   grafana -->|PromQL queries| prom
-  am -->|IAM role, no keys| sns[SNS topic]
-  cw[CloudWatch alarm] -->|status check| argus
+  prom -->|firing alerts| am
+  am -->|IAM role, no keys| sns
+  cw -->|status check| argus
   cw --> sns
   sns -->|email| admin
+  admin -.->|SSH tunnel, admin IP only| grafana
+
+  classDef protect fill:#fde2e1,stroke:#c0392b,color:#1a1a1a
+  classDef observe fill:#dbeafe,stroke:#2563eb,color:#1a1a1a
+  classDef react fill:#dcfce7,stroke:#16a34a,color:#1a1a1a
+  classDef neutral fill:#f3f4f6,stroke:#6b7280,color:#1a1a1a
+  class ssh protect
+  class ne,prom,grafana observe
+  class am,cw,sns react
+  class emp,bot,admin,nginx neutral
+  style vpc fill:#ffffff,stroke:#64748b,color:#1a1a1a
+  style app fill:#f8fafc,stroke:#64748b,color:#1a1a1a
+  style argus fill:#f8fafc,stroke:#64748b,color:#1a1a1a
 ```
+
+Colours: red = protect, blue = observe, green = react.
 
 | Layer | What does it |
 |---|---|
