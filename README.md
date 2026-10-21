@@ -101,8 +101,15 @@ Values that differ per environment never live in the repository: configuration f
 ## Outcome
 
 - Two hardened servers, a monitoring stack and email alerting, built from nothing with `terraform apply` and `deploy.sh`.
-- Four alerts: **NginxStopped**, **Fail2banStopped**, **ServerUnreachable** and **DiskAlmostFull**, plus the CloudWatch alarm on srv-argus.
 - About two minutes from an outage to the email; the RESOLVED email follows about one minute after recovery.
+
+| Alert | Fires when | For |
+|---|---|---|
+| NginxStopped | Nginx is not active on srv-app | 1 min |
+| Fail2banStopped | fail2ban is not active on srv-app | 1 min |
+| ServerUnreachable | Prometheus cannot read srv-app (`up` = 0) | 1 min |
+| DiskAlmostFull | Less than 15 % free on the system disk | 5 min |
+| CloudWatch alarm | srv-argus fails its EC2 status check or sends no data | 2 min |
 
 ### Repository structure
 
